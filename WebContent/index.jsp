@@ -8,15 +8,16 @@
 <title>Rede Social</title>
 </head>
 <body class="blue">
-<div class="center btitle">
-	Seja Bem vindo
-</div>
-<div class="center">
-		<form action="Login" method="post">
-			Label:<input type="text" name="palavra"> <input type="submit"
-				value="teste"> ${msg}
+	<div class="center btitle">Seja Bem vindo</div>
+	<div class="center">
+		<form action="Loginsvl" method="post">
+			Login:<input type="text" name="nome">
+			<br/>
+			Senha:<input type="text"name="password"> 
+			<br/>
+			<input type="submit" value="Log in">
 		</form>
 	</div>
-	<a href="perfil.jsp">Texto</a>
+	<div>${msg}</div>
 </body>
 </html>

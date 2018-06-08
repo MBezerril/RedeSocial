@@ -9,7 +9,7 @@
 	media="screen">
 </head>
 <body>
-	<div class="verde-1 menu">Menu</div>
+	<div class="verde-1 menu">Menu - ${idUsuario}</div>
 	<div class="content">
 		<div class="col-small verde-3">
 			<ul>
