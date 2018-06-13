@@ -31,10 +31,12 @@ public class Login extends HttpServlet {
 		Integer idUsuario;
 		try {
 			idUsuario = checarUsuario(nome, password);
-			if (idUsuario != null) {
+			if (idUsuario != null && idUsuario != 0) {
 				r = req.getRequestDispatcher("/paginas/principal.jsp");
 				req.setAttribute("idUsuario", idUsuario);
 				req.setAttribute("msg", "Bem vindo!");
+			} else {
+				req.setAttribute("msg", "CREDENCIAIS INCORRETAS");
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -51,7 +53,7 @@ public class Login extends HttpServlet {
 	 * @return User ID
 	 */
 	public Integer checarUsuario(String nome, String userPassword) throws SQLException {
-		String query = "SELECT ID, PasswordHash FROM  Usuarios WHERE Login = '"+ nome+"'";;
+		String query = "SELECT ID, PasswordHash FROM  Usuarios WHERE Login = '" + nome + "'";
 
 		Connection conexao = null;
 		Statement stmt = null;

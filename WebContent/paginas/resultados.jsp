@@ -35,7 +35,7 @@
 				<li>Item 3</li>
 			</ul>
 		</div>
-		<div>
+			<div class="verde-1">
 			<ul>
 				<c:forEach items="${listaUsuarios}" var="resultado">
 					<li><c:out value="${resultado.getNomeCompleto()}" /></li>
