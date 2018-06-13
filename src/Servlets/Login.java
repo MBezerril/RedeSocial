@@ -8,12 +8,14 @@ import java.sql.Statement;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import Conexoes.Conexoes;
 
+@WebServlet("/Loginsvl")
 public class Login extends HttpServlet {
 	/**
 	 * 
@@ -30,7 +32,7 @@ public class Login extends HttpServlet {
 		try {
 			idUsuario = checarUsuario(nome, password);
 			if (idUsuario != null) {
-				r = req.getRequestDispatcher("paginas/principal.jsp");
+				r = req.getRequestDispatcher("/paginas/principal.jsp");
 				req.setAttribute("idUsuario", idUsuario);
 				req.setAttribute("msg", "Bem vindo!");
 			}

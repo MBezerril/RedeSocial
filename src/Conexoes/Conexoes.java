@@ -8,7 +8,7 @@ public class Conexoes {
 	public static Connection getConnection() {
 		String url = "jdbc:mysql://localhost:3306/RedeSocial"; // Nome da base de dados
 		String user = "root"; // nome do usuário do MariaDB
-		String password = "mariateste"; // senha do MariaDB
+		String password = "mariatest"; // senha do MariaDB
 		Connection conexao = null;
 		try {
 			Class.forName("org.mariadb.jdbc.Driver");			
