@@ -34,6 +34,12 @@ li {
 	text-align: right;
 }
 
+
+.simple{
+	margin: 0px 0px 10px 0px;
+	padding: 10px;
+}
+
 .verde-1 {
 	color: #fff;
 	background-color: #415427;
@@ -100,8 +106,12 @@ li {
 	font-size: 10px;
 }
 
-.fotter {
-	
+.white{
+	background-color: #FFFFF;
+}
+
+.light-gray{
+	background-color: #AAAAAA;
 }
 
 input.btn-green[type=submit] {
