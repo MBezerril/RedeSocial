@@ -12,7 +12,7 @@ import Classes.Publicacao;
 import Conexoes.Conexoes;
 
 public class Consultas {
-	public Map<Integer, String> getGrupos(int idUsuario) throws SQLException {
+	public static Map<Integer, String> getGrupos(int idUsuario) throws SQLException {
 		String query = "SELECT g.Nome AS Nome, g.ID AS ID " + "FROM Destino AS g "
 				+ "INNER JOIN Participa AS p ON g.ID = p.IDGrupo " + "WHERE p.IDParticipante = " + idUsuario;
 
@@ -46,29 +46,26 @@ public class Consultas {
 		return example;
 	}
 
-	public Map<Integer, String> getAmigos(int idUsuario) throws SQLException {
+	public static HashMap<Integer, String> getAmigos(int idUsuario) throws SQLException {
 		String query = "SELECT u.Nome AS Nome, u.ID AS ID " + "FROM Destino AS u "
 				+ "INNER JOIN Amizades AS a ON u.ID = a.Amigo1 OR u.ID = a.Amigo2 " + "WHERE a.Amigo1 = " + idUsuario
 				+ " OR a.Amigo2 =" + idUsuario;
 
 		Connection conexao = null;
 		Statement stmt = null;
-		// Variável de retorno
-		Map<Integer, String> example = new HashMap<Integer, String>();
-		// Variáveis temporárias
+		HashMap<Integer, String> example = new HashMap<Integer, String>();
 		String p = "";
 		int idtemp = 0;
 		try {
 			// pega conexão
 			conexao = Conexoes.getConnection();
 			stmt = conexao.createStatement();
-			// Executa query predefinida
 			ResultSet results = stmt.executeQuery(query);
-			// pega os resultados pelo nome das colunas da tabela
 			while (results.next()) {
-				p = results.getString("Nome");
 				idtemp = results.getInt("ID");
-				example.put(idtemp, p);
+				p = results.getString("Nome");
+				if (idtemp != idUsuario)
+					example.put(idtemp, p);
 				System.out.println(p + " " + idtemp);
 			}
 		} catch (SQLException e) {
@@ -81,10 +78,10 @@ public class Consultas {
 		return example;
 	}
 
-	public ArrayList<Publicacao> getPublicacao(int idUsuarioAutor, int idUsuarioAlvo) throws SQLException {
-		String query = "SELECT a.ID AS ID " + "FROM Amizades AS a " + "WHERE (a.Amigo1 = " + idUsuarioAutor
-				+ " AND a.Amigo2 =" + idUsuarioAlvo + ") OR (a.Amigo2 =" + idUsuarioAlvo + " AND a.Amigo2 ="
-				+ idUsuarioAutor + ")";
+	public static ArrayList<Publicacao> getPublicacao(int meuId, int idUsuarioAlvo) throws SQLException {
+		String query = "SELECT a.Amigo1 AS Amigo1 " + "FROM Amizades AS a " + "WHERE (a.Amigo1 = " + meuId
+				+ " AND a.Amigo2 =" + idUsuarioAlvo + ") OR (a.Amigo2 =" + idUsuarioAlvo + " AND a.Amigo2 =" + meuId
+				+ ")";
 
 		Connection conexao = null;
 		Statement stmt = null;
@@ -103,42 +100,40 @@ public class Consultas {
 			e.printStackTrace();
 		}
 
-		String query2 = "SELECT p.ID AS ID, p.IDUsuarioAutor AS IDUsuarioAutor, p.IDUsuarioDestino "
-				+ "AS IDUsuarioDestino, p.Visibilidade AS Visibilidade, p.Imagem AS "
-				+ "Imagem , p.Data AS Data,p.Texto AS Texto" + "FROM Publicacoes AS p " + "WHERE p.IDUsuarioDestino = "
-				+ idUsuarioAlvo;
+		String query2 = "SELECT p.ID AS ID, p.IDUsuarioAutor AS IDUsuarioAutor, p.IDDestino "
+				+ "AS IDDestino, p.Visibilidade AS Visibilidade, p.Imagem AS "
+				+ "Imagem , p.Data AS Data,p.Texto AS Texto FROM Publicacoes AS p WHERE p.IDDestino = " + idUsuarioAlvo;
 
-		// Variável de retorno
 		ArrayList<Publicacao> publicacoes = new ArrayList<Publicacao>();
-		// Variáveis temporárias
-		Publicacao example = new Publicacao();
+		Publicacao example;
 		try {
-			// Executa query predefinida
 			ResultSet results = stmt.executeQuery(query2);
-			// pega os resultados pelo nome das colunas da tabela
 			while (results.next()) {
 				if (amizade) {
+					example = new Publicacao();
 					example.setData(results.getDate("Data"));
 					example.setID(results.getInt("ID"));
-					example.setIDDestino(results.getInt("IDUsuarioDestino"));
+					example.setIDDestino(results.getInt("IDDestino"));
 					example.setIDUsuarioAutor(results.getInt("IDUsuarioAutor"));
 					example.setImagem(results.getString("Imagem"));
 					example.setTexto(results.getString("Texto"));
 					example.setVisibilidade(results.getInt("Visibilidade"));
+					Boolean b = setNamePublicacao(example);
 					publicacoes.add(example);
 				} else {
 					if (results.getInt("Visibilidade") == 0) {
+						example = new Publicacao();
 						example.setData(results.getDate("Data"));
 						example.setID(results.getInt("ID"));
-						example.setIDDestino(results.getInt("IDUsuarioDestino"));
+						example.setIDDestino(results.getInt("IDDestino"));
 						example.setIDUsuarioAutor(results.getInt("IDUsuarioAutor"));
 						example.setImagem(results.getString("Imagem"));
 						example.setTexto(results.getString("Texto"));
 						example.setVisibilidade(results.getInt("Visibilidade"));
+						Boolean b = setNamePublicacao(example);
 						publicacoes.add(example);
 					}
 				}
-
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -147,10 +142,11 @@ public class Consultas {
 				stmt.close();
 			}
 		}
+
 		return publicacoes;
 	}
 
-	public boolean setSolicitacao(int idManda, int idRecebe) throws SQLException {
+	public static boolean setSolicitacao(int idManda, int idRecebe) throws SQLException {
 		String insert = "INSERT INTO Solicitacao" + "VALUES ('" + idManda + "','" + idRecebe;
 		Connection conexao = null;
 		Statement stmt = null;
@@ -171,7 +167,7 @@ public class Consultas {
 		return result;
 	}
 
-	public boolean setBloqueio(int idManda, int idRecebe) throws SQLException {
+	public static boolean setBloqueio(int idManda, int idRecebe) throws SQLException {
 		String insert = "INSERT INTO Bloqueio" + "VALUES ('" + idManda + "','" + idRecebe;
 		Connection conexao = null;
 		Statement stmt = null;
@@ -190,6 +186,30 @@ public class Consultas {
 			}
 		}
 		return result;
+	}
+
+	public static boolean setNamePublicacao(Publicacao pub) throws SQLException {
+		String query = "SELECT d.Nome AS Nome FROM Destino AS d WHERE d.ID = " + pub.getIDUsuarioAutor();
+		Connection conexao = null;
+		Statement stmt = null;
+		boolean retorno = false;
+
+		try {
+			conexao = Conexoes.getConnection();
+			stmt = conexao.createStatement();
+			ResultSet results = stmt.executeQuery(query);
+			while (results.next()) {
+				pub.setNomeIDAutor(results.getString("Nome"));
+				retorno = true;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (stmt != null) {
+				stmt.close();
+			}
+		}
+		return retorno;
 	}
 
 }

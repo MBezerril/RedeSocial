@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import Conexoes.Conexoes;
+import Conexoes.Consultas;
 
 @WebServlet("/Loginsvl")
 public class Login extends HttpServlet {
@@ -40,6 +41,11 @@ public class Login extends HttpServlet {
 				
 				req.setAttribute("idUsuario", idUsuario);
 				req.setAttribute("msg", "Bem vindo!");
+				
+				req.setAttribute("publicacoes", Consultas.getPublicacao(idUsuario, idUsuario));
+				req.setAttribute("listaAmigos", Consultas.getAmigos(idUsuario));
+				req.setAttribute("listaGrupos", Consultas.getGrupos(idUsuario));
+				
 			} else {
 				req.setAttribute("msg", "CREDENCIAIS INCORRETAS");
 			}

@@ -13,6 +13,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.sun.org.apache.xml.internal.security.utils.JavaUtils;
+
 import Classes.Usuario;
 import Conexoes.Conexoes;
 
@@ -45,10 +47,10 @@ public class Cadastro extends HttpServlet {
 	}
 
 	public boolean insereUsuario(Usuario user) throws SQLException {
-		String insertDestino = "INSERT INTO Destino VALUES (NULL,'0','" + user.getNomeCompleto() + "')";
-		String insertUsuario = "INSERT INTO Usuarios VALUES ("+user.getIDUsuario()+",'"+user.getLogin()+"','" + user.getPassword() + "')";
-		String SelectDestino= "SELECT max(ID) FROM Destino";
-		
+		String insertDestino = "INSERT INTO Destino VALUES (NULL,'" + user.getNomeCompleto() + "','0')";
+
+		String SelectDestino = "SELECT max(ID) AS ID FROM Destino";
+
 		Connection conexao = null;
 		Statement stmt = null;
 		boolean result = false;
@@ -57,13 +59,11 @@ public class Cadastro extends HttpServlet {
 			conexao = Conexoes.getConnection();
 			stmt = conexao.createStatement();
 			result = stmt.execute(insertDestino);
-			
-			if(result) {
-				ResultSet resultSet = stmt.executeQuery(SelectDestino);
-				int id = (int)resultSet.getInt("ID");
-				result = stmt.execute(insertUsuario);
+			ResultSet resultSet = stmt.executeQuery(SelectDestino);
+			while (resultSet.next()) {
+				Integer id = resultSet.getInt("ID");
+				user.setIDUsuario(id);
 			}
-			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
@@ -71,6 +71,21 @@ public class Cadastro extends HttpServlet {
 				stmt.close();
 			}
 		}
+		String insertUsuario = "INSERT INTO Usuarios VALUES (" + user.getIDUsuario() + ",'" + user.getLogin() + "','"
+				+ user.getPassword() + "','" + user.getEndereco() + "','" + user.getTrabalho() + "',NULL)";
+		try {
+			conexao = Conexoes.getConnection();
+			stmt = conexao.createStatement();
+			result = stmt.execute(insertUsuario);
+			result = true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (stmt != null) {
+				stmt.close();
+			}
+		}
+
 		return result;
 	}
 

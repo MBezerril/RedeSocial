@@ -5,6 +5,7 @@ import java.util.Date;
 public class Publicacao {
 	private int ID;
 	private int IDUsuarioAutor;
+	private String NomeIDAutor;
 	private int IDDestino;
 	private int Visibilidade;
 	private String Imagem;
@@ -65,6 +66,14 @@ public class Publicacao {
 
 	public void setVisibilidade(int visibilidade) {
 		Visibilidade = visibilidade;
+	}
+
+	public String getNomeIDAutor() {
+		return NomeIDAutor;
+	}
+
+	public void setNomeIDAutor(String nomeIDAutor) {
+		NomeIDAutor = nomeIDAutor;
 	}
 
 

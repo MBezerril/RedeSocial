@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -34,20 +35,18 @@ public class Pesquisa extends HttpServlet {
 			throws ServletException, IOException {
 		response.getWriter().append("Served at: ").append(request.getContextPath());
 		String nome = request.getParameter("nomepesquisa");
-		ArrayList<Usuario> listaUsuarios;
-		ArrayList<Grupo> listaGrupos;
+		HashMap<Integer, String> lista;
 		RequestDispatcher r = request.getRequestDispatcher("/paginas/resultados.jsp");
-		
+
 		try {
-			listaUsuarios = pesquisarUsuarios(nome);
-			listaGrupos = pesquisarGrupos(nome);
-			if(listaGrupos.size() == 0 && listaUsuarios.size() == 0) {
-				request.setAttribute("msg", "Nenhum resultado foi encontrado, revise as letras maiusculas e minusculas");
-			}else{
-				request.setAttribute("listaUsuarios", listaUsuarios);
-				request.setAttribute("listaGrupos", listaGrupos);
+			lista = pesquisar(nome);
+			if (lista.size() == 0) {
+				request.setAttribute("msg",
+						"Nenhum resultado foi encontrado, revise as letras maiusculas e minusculas");
+			} else {
+				request.setAttribute("lista", lista);
 				HttpSession htps = request.getSession();
-				Integer idUsuario = (Integer)htps.getAttribute("idUsuario");
+				Integer idUsuario = (Integer) htps.getAttribute("idUsuario");
 				System.out.println(idUsuario);
 			}
 		} catch (SQLException e) {
@@ -62,21 +61,18 @@ public class Pesquisa extends HttpServlet {
 		doGet(request, response);
 	}
 
-	private ArrayList<Usuario> pesquisarUsuarios(String nome) throws SQLException {
-		String query = "SELECT ID, NomeCompleto FROM Usuarios WHERE NomeCompleto like '%" + nome + "%'";
+	private HashMap<Integer, String> pesquisar(String nome) throws SQLException {
+		String query = "SELECT ID, Nome FROM Destino WHERE Nome like '%" + nome + "%'";
 
 		Connection conexao = null;
 		Statement stmt = null;
-		ArrayList<Usuario> listaUsuarios = new ArrayList<Usuario>();
+		HashMap<Integer, String> listaUsuarios = new HashMap<Integer, String>();
 		try {
 			conexao = Conexoes.getConnection();
 			stmt = conexao.createStatement();
 			ResultSet results = stmt.executeQuery(query);
 			while (results.next()) {
-				Usuario usuario = new Usuario();
-				usuario.setIDUsuario(results.getInt("ID"));
-				usuario.setNomeCompleto(results.getString("NomeCompleto"));
-				listaUsuarios.add(usuario);
+				listaUsuarios.put(results.getInt("ID"), results.getString("Nome"));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -87,33 +83,6 @@ public class Pesquisa extends HttpServlet {
 		}
 
 		return listaUsuarios;
-	}
-
-	private ArrayList<Grupo> pesquisarGrupos(String nome) throws SQLException {
-		String query = "SELECT ID, Nome FROM Grupos WHERE Nome like '%" + nome + "%'";
-
-		Connection conexao = null;
-		Statement stmt = null;
-		ArrayList<Grupo> listaGrupos = new ArrayList<Grupo>();
-		try {
-			conexao = Conexoes.getConnection();
-			stmt = conexao.createStatement();
-			ResultSet results = stmt.executeQuery(query);
-			while (results.next()) {
-				Grupo grupo = new Grupo();
-				grupo.setID(results.getInt("ID"));
-				grupo.setNome(results.getString("Nome"));
-				listaGrupos.add(grupo);
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			if (stmt != null) {
-				stmt.close();
-			}
-		}
-
-		return listaGrupos;
 	}
 
 }
