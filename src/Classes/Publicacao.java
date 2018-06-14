@@ -68,12 +68,4 @@ public class Publicacao {
 	}
 
 
-	public Date getDataCriacao() {
-		return Data;
-	}
-
-	public void setDataCriacao(Date dataCriacao) {
-		Data = dataCriacao;
-	}
-
 }

@@ -2,6 +2,7 @@ package Servlets;
 
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -43,10 +44,11 @@ public class Cadastro extends HttpServlet {
 		r.forward(req, res);
 	}
 
-	public boolean insereUsuario(Usuario user)
-			throws SQLException {
-		String insert = "INSERT INTO Usuarios (Login, PasswordHash,  Endereco, Trabalho)" + "VALUES ('" + user.getLogin() + "','" + user.getPassword() + "','" + user.getEndereco()
-				+ "','" + user.getTrabalho() + "');";
+	public boolean insereUsuario(Usuario user) throws SQLException {
+		String insertDestino = "INSERT INTO Destino VALUES (NULL,'0','" + user.getNomeCompleto() + "')";
+		String insertUsuario = "INSERT INTO Usuarios VALUES ("+user.getIDUsuario()+",'"+user.getLogin()+"','" + user.getPassword() + "')";
+		String SelectDestino= "SELECT max(ID) FROM Destino";
+		
 		Connection conexao = null;
 		Statement stmt = null;
 		boolean result = false;
@@ -54,8 +56,14 @@ public class Cadastro extends HttpServlet {
 		try {
 			conexao = Conexoes.getConnection();
 			stmt = conexao.createStatement();
-			result = stmt.execute(insert);
-			result = true;
+			result = stmt.execute(insertDestino);
+			
+			if(result) {
+				ResultSet resultSet = stmt.executeQuery(SelectDestino);
+				int id = (int)resultSet.getInt("ID");
+				result = stmt.execute(insertUsuario);
+			}
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {

@@ -13,6 +13,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import Classes.Grupo;
 import Classes.Usuario;
@@ -44,7 +45,10 @@ public class Pesquisa extends HttpServlet {
 				request.setAttribute("msg", "Nenhum resultado foi encontrado, revise as letras maiusculas e minusculas");
 			}else{
 				request.setAttribute("listaUsuarios", listaUsuarios);
-				request.setAttribute("listaGruos", listaGrupos);
+				request.setAttribute("listaGrupos", listaGrupos);
+				HttpSession htps = request.getSession();
+				Integer idUsuario = (Integer)htps.getAttribute("idUsuario");
+				System.out.println(idUsuario);
 			}
 		} catch (SQLException e) {
 			request.setAttribute("msg", "Erro durante a consulta!");

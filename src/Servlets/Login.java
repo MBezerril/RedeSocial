@@ -12,6 +12,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import Conexoes.Conexoes;
 
@@ -33,6 +34,10 @@ public class Login extends HttpServlet {
 			idUsuario = checarUsuario(nome, password);
 			if (idUsuario != null && idUsuario != 0) {
 				r = req.getRequestDispatcher("/paginas/principal.jsp");
+				
+				HttpSession session = req.getSession();
+				session.setAttribute("idUsuario", idUsuario);
+				
 				req.setAttribute("idUsuario", idUsuario);
 				req.setAttribute("msg", "Bem vindo!");
 			} else {
